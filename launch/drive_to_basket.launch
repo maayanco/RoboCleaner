@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+	<node name="drive_handler_node" pkg="robocleaner" type="DriveHandler" output="screen"> 
+		<param name="~basket_location_x" value="3.6"/> <!-- 4 -->
+		<param name="~basket_location_y" value="-1"/> <!-- -0.300088 -->
+		<param name="~base_distance_from_object" value="0.55"/>
+	</node>
+
+</launch>

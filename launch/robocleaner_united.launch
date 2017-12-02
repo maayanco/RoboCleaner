@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<launch>
+  
+	<node name="drive_handler_node" pkg="robocleaner" type="DriveHandler" output="screen" required="false"> 
+		<param name="~basket_location_x" value="3.8"/> <!-- 4 -->
+		<param name="~basket_location_y" value="-1"/> <!-- -0.300088 -->
+		<param name="~base_distance_from_object" value="0.55"/>
+	</node>
+
+  
+	<node name="find_object_node" pkg="robocleaner" type="ObjectsDetector" output="screen" required="false">
+	      <param name="~object_id" value="1"/>
+	      <param name="~depth_topic1" value="/kinect2/qhd/points"/>
+	      <rosparam file="$(find robotican_demos)/config/red_object.yaml" command="load"/>
+	</node> 
+	  
+	  <node name="objects_handler_node" pkg="robocleaner" type="ObjectsHandler" output="screen" required="false">
+	  </node> 
+	
+	  <node name="obj_view" pkg="rqt_image_view" type="rqt_image_view" required="false">
+	      <remap from="image" to="find_object_node/result" />
+	  </node>
+
+	  <node name="target_view" pkg="rqt_image_view" type="rqt_image_view" required="false">
+	      <remap from="image" to="find_object_node/result_table" />
+	  </node>
+
+	<node name="pick_place_manager_node" pkg="robocleaner" type="PickPlaceManager" output="screen" required="false"> 
+	    <param name="~start_position_name" value="pre_grasp3"/>
+	    <param name="~object_name" value="can"/>
+	    <param name="~table_name" value="table"/>
+
+	</node>
+
+</launch>
+

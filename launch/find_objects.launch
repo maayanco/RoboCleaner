@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+
+ <!--EXAMPLE
+ roslaunch robotican_armadillo armadillo.launch kinect2:=true softkinetic:=true world_name:="`rospack find robotican_common`/worlds/objects_on_table.world" gazebo:=true 
+ 
+ roslaunch robotican_demos find_objects.launch 
+ -->
+
+<launch>  
+  <node name="find_object_node" pkg="robocleaner" type="ObjectsDetector" output="screen">
+    <param name="~object_id" value="1"/>
+    <param name="~depth_topic1" value="/kinect2/qhd/points"/>
+     <param name="~depth_topic2" value="/softkinetic_camera/depth/points"/>  
+    <rosparam file="$(find robotican_demos)/config/red_object.yaml" command="load"/>
+   </node> 
+    
+    <node name="objects_handler_node" pkg="robocleaner" type="ObjectsHandler" output="screen">
+       <param name="~db_path" value=""/>
+   </node> 
+   
+    <node name="object_view" pkg="rqt_image_view" type="rqt_image_view" >
+      <remap from="image" to="find_object_node/result" />
+    </node>
+
+</launch>
+

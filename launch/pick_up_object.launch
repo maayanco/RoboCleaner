@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+      <node name="pick_place_manager_node" pkg="robocleaner" type="PickPlaceManager" output="screen"> 
+	<param name="~start_position_name" value="pre_grasp3"/>
+	<param name="~object_name" value="can"/>
+	<param name="~table_name" value="tablee"/>
+
+      </node>
+
+</launch>
