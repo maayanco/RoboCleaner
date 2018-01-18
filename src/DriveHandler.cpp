@@ -2,6 +2,7 @@
 #include <ros/ros.h>
 #include <std_msgs/String.h>
 #include <move_base_msgs/MoveBaseAction.h>
+#include <sensor_msgs/LaserScan.h>
 #include <geometry_msgs/PointStamped.h>
 #include <geometry_msgs/Point.h>
 #include <std_srvs/Trigger.h>
@@ -16,6 +17,7 @@
 #include <sstream>
 #include <trajectory_msgs/JointTrajectory.h>
 #include <moveit_msgs/DisplayTrajectory.h>
+#include <vector>
 #include "tf/tf.h"
 
 ros::ServiceClient *pickClientPtr;
@@ -24,11 +26,13 @@ ros::ServiceClient *placeClientPtr;
 ros::Publisher twistPub;
 ros::Publisher controllerCommandPub;
 ros::Subscriber targetRangeSub;
+ros::Subscriber laserSub;
 ros::Publisher shutDownPub;
 
 //Forward declerations
 void send_twist_msg(double linearX, double linearY, double linearZ, double angularX, double angularY, double angularZ);
 void target_range_check(const geometry_msgs::Point::ConstPtr &p);
+void check_emergency_stop(const sensor_msgs::LaserScan::ConstPtr &p);
 void look_down();
 
 bool shouldRotate = true;
@@ -37,6 +41,7 @@ int inputLength=540;
 int inputWidth=960;
 
 std::string pickable_object_name;
+float minimum_distance_from_obstacle;
 
 int main(int argc, char **argv)
 {
@@ -47,7 +52,7 @@ int main(int argc, char **argv)
     ros::NodeHandle pn("~");
 
     pn.param<std::string>("pickable_object_name", pickable_object_name, "can");
-   
+    pn.param<float>("minimum_distance_from_obstacle", minimum_distance_from_obstacle, 0.1);
    
     controllerCommandPub = n.advertise<trajectory_msgs::JointTrajectory>("/pan_tilt_trajectory_controller/command", 2);
 
@@ -74,7 +79,8 @@ int main(int argc, char **argv)
     pickAndPlaceSync.waitForExistence();
     
     targetRangeSub = n.subscribe("target_range_pose", 10, target_range_check);
-
+    laserSub=n.subscribe("scan",1,check_emergency_stop);
+    
     shutDownPub = n.advertise<std_msgs::String>("shut_down_go", 10);
 
     //initialize twist client
@@ -190,6 +196,27 @@ void target_range_check(const geometry_msgs::Point::ConstPtr &p){
         shouldRotate=false;
     }
     
+}
+
+void check_emergency_stop(const sensor_msgs::LaserScan::ConstPtr &p){
+    int vecInc = 50;
+    std::vector<float> ranges = p->ranges;
+    int vecLength = ranges.size();
+    int midIndex = vecLength/2;
+    int startIndex =midIndex-vecInc;
+    int endIndex =midIndex+vecInc;
+    
+    for(int i=startIndex; i<endIndex; i++){
+        if(ranges[i]<minimum_distance_from_obstacle){
+            std_msgs::String shutDownMsg;
+            shutDownMsg.data = "Emergency shutdown due to obstacle";
+            shutDownPub.publish(shutDownMsg);
+            ROS_INFO("Obstacle detected - emergency stop initiated ");
+            ros::shutdown();
+            break;
+        }
+    }
+
 }
 
 void look_down() {
