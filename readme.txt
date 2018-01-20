@@ -1,8 +1,13 @@
+Click to view demo:
+[![Link to demo](https://img.youtube.com/vi/HzSgDpK-Uvk/0.jpg)](https://www.youtube.com/watch?v=HzSgDpK-Uvk)
 
-roslaunch robotican_armadillo armadillo.launch lidar:=true kinect2:=true sr300:=true moveit:=true gmapping:=true move_base:=true world_name:="`rospack find robotican_common`/worlds/objects_on_table_box4.world" gazebo:=true
+The armadillo robot locates the can on the table and picks it up.
+It then begins to rotate in place until locating the trash.
+When the trash is located it rotates until the can is in the range of the trash (and adjustes position otherwise), finally dropping the can.
 
+
+To run the package:
 roslaunch robocleaner robocleaner_united.launch
-
 
 ------------------------------------------------------------------------------------------------------------------------------------
 seperate launch files for testing:
@@ -14,17 +19,6 @@ roslaunch robocleaner find_objects.launch
 roslaunch robocleaner drive_to_basket.launch
 
 
---------------------------------------------------------------------------------------------------------------------------------------
-
-Useful requests for testing:
-rosservice call /pick_go "{}"
-rosservice call /place_go "{}"
-
---------------------------------------------------------------------------------------------------------------------------------------
-
-setup env:
-source /opt/ros/indigo/setup.bash
-source ~/catkin_ws/devel/setup.bash
 
 
 
