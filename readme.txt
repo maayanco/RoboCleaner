@@ -1,5 +1,5 @@
 Click to view demo:
-[![Link to demo](https://img.youtube.com/vi/HzSgDpK-Uvk/0.jpg)](https://www.youtube.com/watch?v=HzSgDpK-Uvk)
+[![Link to demo](https://img.youtube.com/vi/HzSgDpK-Uvk/0.jpg)](https://www.youtube.com/watch?v=HzSgDpK-Uvk)]
 
 The armadillo robot locates the can on the table and picks it up.
 It then begins to rotate in place until locating the trash.
